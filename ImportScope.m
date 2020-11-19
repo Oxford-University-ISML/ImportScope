@@ -1084,7 +1084,7 @@ clearvars waveform_raw offset fid
     function read_voltages
         fseek(fid, offset + waveform_raw.info.wave_descriptor + waveform_raw.info.user_text + waveform_raw.info.trigtime_array + waveform.info.ris_time_array, 'bof');
         if logical(waveform_raw.info.comm_type) %word
-            waveform.voltage=fread(fid,waveform.info.wave_array1, 'int16');
+            waveform.voltage=fread(fid,waveform.info.wave_array1/2, 'int16');
         else %byte
             waveform.voltage=fread(fid,waveform.info.wave_array1,'int8');
         end
@@ -1094,26 +1094,15 @@ clearvars waveform_raw offset fid
     function read_second_voltages
         if logical(waveform.info.wave_array2)
             disp('THIS FILE CONTAINS INFORMATION THAT MAY NOT HAVE BEEN IMPORTED, PLEASE SAVE AS .dat ON SCOPE AND SEND LIAM THE .trc FILE')
-            if ~logical(points_per_pair)
-                fseek(fid, offset + waveform_raw.info.wave_descriptor + waveform_raw.info.user_text + waveform_raw.info.trigtime_array + waveform.info.ris_time_array +waveform.info.wave_array1 , 'bof');
-                if logical(waveform_raw.info.comm_type) %word
-                    waveform.voltage=fread(fid,waveform.info.wave_array1, 'int16');
-                else %byte
-                    waveform.voltage=fread(fid,waveform.info.wave_array1,'int8');
-                end
-                waveform.voltage2 = waveform.voltage2 * waveform.info.vertical_gain - waveform.info.vertical_offset;    
-            else
-                fseek(fid, offset + waveform_raw.info.wave_descriptor + waveform_raw.info.user_text + waveform_raw.info.trigtime_array + waveform.info.ris_time_array +waveform.info.wave_array1 , 'bof');
-                if logical(waveform_raw.info.comm_type) %word
-                    waveform.voltage=fread(fid,2*(waveform.info.wave_array1/waveform.info.points_per_pair), 'int16');
-                else %byte
-                    waveform.voltage=fread(fid,2*(waveform.info.wave_array1/waveform.info.points_per_pair),'int8');
-                end
-                waveform.voltage2 = waveform.voltage2 * waveform.info.vertical_gain - waveform.info.vertical_offset; 
+            fseek(fid, offset + waveform_raw.info.wave_descriptor + waveform_raw.info.user_text + waveform_raw.info.trigtime_array + waveform.info.ris_time_array +waveform.info.wave_array1 , 'bof');
+            if logical(waveform_raw.info.comm_type) %word
+                waveform.voltage=fread(fid,waveform.info.wave_array2/2,'int16');
+            else %byte
+                waveform.voltage=fread(fid,waveform.info.wave_array2,'int8');
             end
-                
+            waveform.voltage2 = waveform.voltage2 * waveform.info.vertical_gain - waveform.info.vertical_offset; 
         end
-    end 
+    end
     function generate_time_series
         waveform.time = (0:waveform.info.wave_array_count-1) * waveform.info.horizontal_interval + waveform.info.horizontal_offset;
         waveform.time = waveform.time(:);
@@ -1132,7 +1121,7 @@ function e = ReadEnumLecroy(fid,Addr)
 end
 function w = ReadWord(fid, Addr)
 	fseek(fid,Addr,'bof');
-	w=fread(fid,1,'int16');
+	w = fread(fid,1,'int16');
 end
 function d = ReadDouble(fid, Addr)
 	fseek(fid,Addr,'bof');
