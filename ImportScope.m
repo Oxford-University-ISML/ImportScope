@@ -1,34 +1,46 @@
-function waveform = ImportScope
+function waveform = ImportScope(inputargs)
+arguments
+    inputargs.Filename string
+    inputargs.Echo     logical = true
+end
 %% Getting file
-[filename,pathname] = uigetfile('*');
-
+if isfield(inputargs,'Filename')
+    Filename = char(inputargs.Filename);
+else
+    [Filename,pathname] = uigetfile('*');
+    Filename = fullfile(pathname,Filename);
+    clearvars pathname
+end
+    
 %% Checking file format
-if strcmp(filename(end-2:end),'trc')
+if strcmp(Filename(end-2:end),'trc')
     file_type = 'lecroy';
-    disp('Well tested import function, please check imported correctly before removing trace from scope')
-elseif strcmp(filename(end-2:end),'wfm')
+    if inputargs.Echo
+        disp('Well tested import function, please check imported correctly before removing trace from scope')
+    end
+elseif strcmp(Filename(end-2:end),'wfm')
     file_type = 'tek_wfm';
-    disp('Fairly well tested import function, please check imported correctly before removing trace from scope')
-elseif strcmp(filename(end-2:end),'isf')
+    if inputargs.Echo
+        disp('Fairly well tested import function, please check imported correctly before removing trace from scope')
+    end
+elseif strcmp(Filename(end-2:end),'isf')
     file_type = 'tek_isf';
-    disp('Basically untested import function, please carefully check and if neccessary send .isf file to Liam')
+    if inputargs.Echo
+        disp('Basically untested import function, please carefully check and if neccessary send .isf file to Liam')
+    end
 else
     disp('Unknown filetype, check selection.')
     file_type = NaN;
 end
 
-%% Setting filename into correct format
-filename = [pathname,filename];
-clearvars pathname
-
 %% Importing file based on previosuly determined file type.
 if ~isnan(file_type)
     if strcmp(file_type,'lecroy')
-        waveform = ImportScopeLecroy(filename);
+        waveform = ImportScopeLecroy(Filename);
     elseif strcmp(file_type,'tek_wfm')
-        waveform = ImportScopeTekWFM(filename);
+        waveform = ImportScopeTekWFM(Filename);
     elseif strcmp(file_type,'tek_isf')
-        waveform = ImportScopeTekISF(filename);
+        waveform = ImportScopeTekISF(Filename);
     end
 end
 
