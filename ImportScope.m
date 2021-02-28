@@ -56,7 +56,7 @@ locations = struct(); % building the locations struct, this is used for working 
 
 %% Reading in the opening 1000 bytes, converting to character and then finding the endian-ness
 
-data = fread(fid,1000,'*char')';
+data = fread(fid,1000,'uchar')';
 locations.byte_order = find_location('BYT_O');
 waveform.information.byte_order = data(locations.byte_order.start:locations.byte_order.start+locations.byte_order.length);
 
