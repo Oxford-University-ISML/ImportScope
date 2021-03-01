@@ -366,7 +366,7 @@ classdef ScopeTrace
             tmp = ['byte';'word'];
             obj.Info.comm_type = tmp(1+obj.Info.comm_type,:);
             
-            tmp = ['HIFIRST';'LOFIRST'];
+            tmp = ['LOFIRST';'HIFIRST'];
             obj.Info.comm_order = tmp(1+obj.Info.comm_order,:);
             
             tmp=[

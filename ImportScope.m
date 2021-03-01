@@ -1015,7 +1015,7 @@ clearvars waveform_raw offset fid
         tmp = ['byte';'word'];
         waveform.info.comm_type = tmp(1+waveform.info.comm_type,:);
         
-        tmp = ['HIFIRST';'LOFIRST'];
+        tmp = ['LOFIRST';'HIFIRST'];
         waveform.info.comm_order = tmp(1+waveform.info.comm_order,:);
         
         tmp=[
