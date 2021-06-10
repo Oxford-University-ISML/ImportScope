@@ -221,6 +221,12 @@ classdef ScopeTrace
                 SingleWaveform = 'Invalid Import';
             end
         end
+        function time               = time(obj)
+            time = obj.Time;
+        end
+        function voltage            = voltage(obj)
+            voltage = obj.Voltage;
+        end
     end
     
     methods (Access = private)
