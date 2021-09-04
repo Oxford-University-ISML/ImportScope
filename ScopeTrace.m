@@ -61,6 +61,10 @@ classdef ScopeTrace
                         obj = GetTektronixDatInfo(obj);
                     case 'Tektronix (.csv)'
                         obj = GetTektronixCsvInfo(obj);
+                    case 'Simple CSV (.SimpleCSV)'
+                        fclose(obj.fid);
+                        obj = GetSimpleCSVInfo(obj);
+                        obj.fid = fopen(obj.FilePath,'r');
                     otherwise
                         obj.Info = 'Invalid File Type, must be: (.trc),(.dat),(.wfm),(.isf) or (.csv)';
                 end
@@ -85,6 +89,8 @@ classdef ScopeTrace
                     case 'Tektronix (.csv)'
                         Time = 'Not Currently Available for Tektronnix (.csv)';
                         %Time = GetTektronixCsvTime(obj);
+                    case 'Simple CSV (.SimpleCSV)'
+                        Time = GetSimpleCSVTime(obj);
                 end
             else
                 Time = 'Invalid Import';
@@ -106,6 +112,8 @@ classdef ScopeTrace
                     case 'Tektronix (.csv)'
                         Voltage = 'Not Currently Available for Tektronnix (.csv)';
                         %Voltage = GetTektronixCsvVoltage(obj);
+                    case 'Simple CSV (.SimpleCSV)'
+                        Voltage = GetSimpleCSVVoltage(obj);
                 end
             else
                 Voltage = 'Invalid Import';
@@ -122,6 +130,8 @@ classdef ScopeTrace
                     case 'Tektronix (.csv)'
                         SecondVoltage = 'Not Available for Tektronnix (.csv)';
                         %SecondVoltage   = GetTektronixCsvSecondVoltage(obj);
+                    case 'Simple CSV (.SimpleCSV)'
+                        SecondVoltage = 'Not Available for Simple CSV (.SimpleCSV)';
                 end
             else
                 SecondVoltage = 'Invalid Import';
@@ -188,6 +198,9 @@ classdef ScopeTrace
                     case 'Tektronix (.dat)'
                         Waveform.time    = GetTektronixDatTime(obj);
                         Waveform.voltage = GetTektronixDAtVoltage(obj);
+                    case 'Simple CSV (.SimpleCSV)'
+                        Waveform.time    = GetSimpleCSVTime(obj);
+                        Waveform.voltage = GetSimpleCSVVoltage(obj);
                 end
             else
                 Waveform = 'Invalid Import';
@@ -240,6 +253,8 @@ classdef ScopeTrace
                     obj.TraceType = 'Tektronix (.wfm)';
                 case '.dat' 
                     obj.TraceType = obj.DecipherDatType(obj.FilePath);
+                case 'eCSV'
+                    obj.TraceType = 'Simple CSV (.SimpleCSV)';
                 otherwise
                     obj.TraceType = 'Unsupported Trace Type';
             end
@@ -1315,6 +1330,40 @@ classdef ScopeTrace
             Voltage = single(GetTektronixDatVoltage(obj));
             Error = double(eps(max(abs(Voltage)))) / min(abs(diff(unique(Voltage))));
         end
+        % .SimpleCSV Methods
+        function obj                = GetSimpleCSVInfo(obj)
+            
+            TimeTmp = csvread(obj.FilePath);
+            TimeTmp = TimeTmp(:,1);
+            
+            obj.Info.StartTime = min(TimeTmp);
+            obj.Info.EndTime   = max(TimeTmp);
+            obj.Info.NumberOfPoints = numel(TimeTmp);
+            obj.Info.HorizontalInterval = abs(TimeTmp(2)-TimeTmp(1));
+            
+            obj.ValidImport = true;
+        end
+        function Time               = GetSimpleCSVTime(obj)
+            Time = linspace(obj.Info.StartTime, ...
+                            obj.Info.EndTime, ...
+                            obj.Info.NumberOfPoints)';
+        end
+        function Voltage            = GetSimpleCSVVoltage(obj)
+            CompressedFilePath = [obj.FilePath(1:end-10),'CompressedVoltage'];
+            
+            if ~isfile(CompressedFilePath)
+                Voltage = csvread(obj.FilePath);
+                Voltage = Voltage(:,2);
+                obj.WriteCompressedWaveform(CompressedFilePath,Voltage)
+            else
+                Voltage = obj.ReadCompressedWaveform(CompressedFilePath, ...
+                                                 obj.Info.NumberOfPoints);
+            end
+        end
+    end
+    
+    methods
+        
     end
     
     methods(Static)
