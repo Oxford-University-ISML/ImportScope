@@ -30,11 +30,12 @@ classdef ScopeTrace
     methods
         function obj = ScopeTrace(inputargs)
             arguments
-                inputargs.FilePath
-                inputargs.Echo        = false;
-                inputargs.CachedTrace = false;
+                inputargs.FilePath      {mustBeFile}
+                inputargs.Echo          = false;
+                inputargs.CachedTrace   = false;
             end
-            if ~isfield(inputargs,'FilePath')
+            
+            if ~isfile(inputargs,'FilePath')
                 [file,path] = uigetfile('*');
                 inputargs.FilePath = fullfile(path,file);
                 clearvars file path
@@ -45,25 +46,25 @@ classdef ScopeTrace
             
             if isfile(obj.FilePath)
                 
-                obj = GetTraceType(obj);
+                obj = obj.GetTraceType;
                 
                 obj.fid = fopen(obj.FilePath,'r');
                 switch obj.TraceType
                     case 'LeCroy (.trc)'
-                        obj = GetLeCroyTrcInfo(obj);
+                        obj = obj.GetLeCroyTrcInfo;
                     case 'LeCroy (.dat)'
-                        obj = GetLeCroyDatInfo(obj);
+                        obj = obj.GetLeCroyDatInfo;
                     case 'Tektronix (.wfm)'
-                        obj = GetTektronixWfmInfo(obj);
+                        obj = obj.GetTektronixWfmInfo;
                     case 'Tektronix (.isf)'
-                        obj = GetTektronixIsfInfo(obj);
+                        obj = obj.GetTektronixIsfInfo;
                     case 'Tektronix (.dat)'
-                        obj = GetTektronixDatInfo(obj);
+                        obj = obj.GetTektronixDatInfo;
                     case 'Tektronix (.csv)'
-                        obj = GetTektronixCsvInfo(obj);
+                        % obj = obj.GetTektronixCsvInfo;
                     case 'Simple CSV (.SimpleCSV)'
                         fclose(obj.fid);
-                        obj = GetSimpleCSVInfo(obj);
+                        obj = obj.GetSimpleCSVInfo;
                         obj.fid = fopen(obj.FilePath,'r');
                     otherwise
                         obj.Info = 'Invalid File Type, must be: (.trc),(.dat),(.wfm),(.isf) or (.csv)';
@@ -77,20 +78,21 @@ classdef ScopeTrace
             if obj.ValidImport
                 switch obj.TraceType
                     case 'LeCroy (.trc)'
-                        Time = GetLeCroyTrcTime(obj);
+                        Time = obj.GetLeCroyTrcTime;
                     case 'LeCroy (.dat)'
-                        Time = GetLeCroyDatTime(obj);
+                        Time = obj.GetLeCroyDatTime;
                     case 'Tektronix (.wfm)'
-                        Time = GetTektronixWfmTime(obj);
+                        Time = obj.GetTektronixWfmTime;
                     case 'Tektronix (.isf)'
-                        Time = GetTektronixIsfTime(obj);
+                        Time = obj.GetTektronixIsfTime;
                     case 'Tektronix (.dat)'
-                        Time = GetTektronixDatTime(obj);
+                        Time = obj.GetTektronixDatTime;
                     case 'Tektronix (.csv)'
-                        Time = 'Not Currently Available for Tektronnix (.csv)';
-                        %Time = GetTektronixCsvTime(obj);
+                        disp('Not Currently Available for Tektronnix (.csv)')
+                        Time = [];
+                        %Time = obj.GetTektronixCsvTime; Not Yet Written
                     case 'Simple CSV (.SimpleCSV)'
-                        Time = GetSimpleCSVTime(obj);
+                        Time = obj.GetSimpleCSVTime;
                 end
             else
                 Time = 'Invalid Import';
@@ -100,20 +102,20 @@ classdef ScopeTrace
             if obj.ValidImport
                 switch obj.TraceType
                     case 'LeCroy (.trc)'
-                        Voltage = GetLeCroyTrcVoltage(obj);
+                        Voltage = obj.GetLeCroyTrcVoltage;
                     case 'LeCroy (.dat)'
-                        Voltage = GetLeCroyDatVoltage(obj);
+                        Voltage = obj.GetLeCroyDatVoltage;
                     case 'Tektronix (.wfm)'
-                        Voltage = GetTektronixWfmVoltage(obj);
+                        Voltage = obj.GetTektronixWfmVoltage;
                     case 'Tektronix (.isf)'
-                        Voltage = GetTektronixIsfVoltage(obj);
+                        Voltage = obj.GetTektronixIsfVoltage;
                     case 'Tektronix (.dat)'
-                        Voltage = GetTektronixDatVoltage(obj);
+                        Voltage = obj.GetTektronixDatVoltage;
                     case 'Tektronix (.csv)'
                         Voltage = 'Not Currently Available for Tektronnix (.csv)';
-                        %Voltage = GetTektronixCsvVoltage(obj);
+                        %Voltage = obj.GetTektronixCsvVoltage;
                     case 'Simple CSV (.SimpleCSV)'
-                        Voltage = GetSimpleCSVVoltage(obj);
+                        Voltage = obj.GetSimpleCSVVoltage;
                 end
             else
                 Voltage = 'Invalid Import';
@@ -123,13 +125,13 @@ classdef ScopeTrace
             if obj.ValidImport
                 switch obj.TraceType
                     case 'LeCroy (.trc)'
-                        SecondVoltage   = GetLeCroyTrcSecondVoltage(obj);
+                        SecondVoltage   = obj.GetLeCroyTrcSecondVoltage;
                     case 'Tektronix (.wfm)'
                         SecondVoltage = 'Not Currently Available for Tektronnix (.wfm)';
-                        %SecondVoltage   = GetTektronixWfmSecondVoltage(obj);
+                        %SecondVoltage   = obj.GetTektronixWfmSecondVoltage;
                     case 'Tektronix (.csv)'
                         SecondVoltage = 'Not Available for Tektronnix (.csv)';
-                        %SecondVoltage   = GetTektronixCsvSecondVoltage(obj);
+                        %SecondVoltage   = obj.GetTektronixCsvSecondVoltage;
                     case 'Simple CSV (.SimpleCSV)'
                         SecondVoltage = 'Not Available for Simple CSV (.SimpleCSV)';
                 end
@@ -141,7 +143,7 @@ classdef ScopeTrace
             if obj.ValidImport
                 switch obj.TraceType
                     case 'LeCroy (.trc)'
-                        UserText = GetLeCroyTrcUserText(obj);
+                        UserText = obj.GetLeCroyTrcUserText;
                 end
             else
                 UserText = 'Invalid Import';
@@ -151,7 +153,7 @@ classdef ScopeTrace
             if obj.ValidImport 
                 switch obj.TraceType
                     case 'LeCroy (.trc)'
-                        TrigtimeArray   = GetLeCroyTrcTrigtimeArray(obj);
+                        TrigtimeArray   = obj.GetLeCroyTrcTrigtimeArray;
                 end
             else
                 TrigtimeArray = 'Invalid Import';
@@ -161,7 +163,7 @@ classdef ScopeTrace
             if obj.ValidImport
                 switch obj.TraceType
                     case 'LeCroy (.trc)'
-                        RisTimeArray    = GetLeCroyTrcRisTimeArray(obj);
+                        RisTimeArray    = obj.GetLeCroyTrcRisTimeArray;
                 end
             else
                 RisTimeArray = 'Invalid Import';
@@ -171,11 +173,14 @@ classdef ScopeTrace
         
         function TracePlot          = PlotTrace(obj,Ax)
             if obj.ValidImport
-                if ~exist('Ax') %#ok<EXIST>
+                if ~exist('Ax','var')
                     TracePlot = figure();
                     Ax = axes(TracePlot);
                 end
                 plot(Ax,obj.Time,obj.Voltage)
+                if ~exist('TracePlot','var')
+                    TracePlot = true;
+                end
             else
                 TracePlot = 'Invalid Import';
             end
@@ -184,23 +189,23 @@ classdef ScopeTrace
             if obj.ValidImport
                 switch obj.TraceType
                     case 'LeCroy (.trc)'
-                        Waveform.time    = GetLeCroyTrcTime(obj);
-                        Waveform.voltage = GetLeCroyTrcVoltage(obj);
+                        Waveform.time    = obj.GetLeCroyTrcTime;
+                        Waveform.voltage = obj.GetLeCroyTrcVoltage;
                     case 'LeCroy (.dat)'
-                        Waveform.time    = GetLeCroyDatTime(obj);
-                        Waveform.voltage = GetLeCroyDatVoltage(obj);
+                        Waveform.time    = obj.GetLeCroyDatTime;
+                        Waveform.voltage = obj.GetLeCroyDatVoltage;
                     case 'Tektronix (.wfm)'
-                        Waveform.time    = GetTektronixWfmTime(obj);
-                        Waveform.voltage = GetTektronixWfmVoltage(obj);
+                        Waveform.time    = obj.GetTektronixWfmTime;
+                        Waveform.voltage = obj.GetTektronixWfmVoltage;
                     case 'Tektronix (.isf)'
-                        Waveform.time    = GetTektronixIsfTime(obj);
-                        Waveform.voltage = GetTektronixIsfVoltage(obj);
+                        Waveform.time    = obj.GetTektronixIsfTime;
+                        Waveform.voltage = obj.GetTektronixIsfVoltage;
                     case 'Tektronix (.dat)'
-                        Waveform.time    = GetTektronixDatTime(obj);
-                        Waveform.voltage = GetTektronixDAtVoltage(obj);
+                        Waveform.time    = obj.GetTektronixDatTime;
+                        Waveform.voltage = obj.GetTektronixDatVoltage;
                     case 'Simple CSV (.SimpleCSV)'
-                        Waveform.time    = GetSimpleCSVTime(obj);
-                        Waveform.voltage = GetSimpleCSVVoltage(obj);
+                        Waveform.time    = obj.GetSimpleCSVTime;
+                        Waveform.voltage = obj.GetSimpleCSVVoltage;
                 end
             else
                 Waveform = 'Invalid Import';
@@ -210,24 +215,24 @@ classdef ScopeTrace
             if obj.ValidImport    
                 switch obj.TraceType
                     case 'LeCroy (.trc)'
-                        [SingleWaveform.time   ,TimeError   ] = GetLeCroyTrcTimeSingle(obj);
-                        [SingleWaveform.voltage,VoltageError] = GetLeCroyTrcVoltageSingle(obj);
+                        [SingleWaveform.time   ,TimeError   ] = obj.GetLeCroyTrcTimeSingle;
+                        [SingleWaveform.voltage,VoltageError] = obj.GetLeCroyTrcVoltageSingle;
                         SingleWaveform.Quality = 1 - hypot(TimeError,VoltageError);
                     case 'LeCroy (.dat)'
-                        [SingleWaveform.time   ,TimeError   ] = GetLeCroyDatTimeSingle(obj);
-                        [SingleWaveform.voltage,VoltageError] = GetLeCroyDatVoltageSingle(obj);
+                        [SingleWaveform.time   ,TimeError   ] = obj.GetLeCroyDatTimeSingle;
+                        [SingleWaveform.voltage,VoltageError] = obj.GetLeCroyDatVoltageSingle;
                         SingleWaveform.Quality = 1 - hypot(TimeError,VoltageError);
                     case 'Tektronix (.wfm)'
-                        [SingleWaveform.time   ,TimeError   ] = GetTektronixWfmTimeSingle(obj);
-                        [SingleWaveform.voltage,VoltageError] = GetTektronixWfmVoltageSingle(obj);
+                        [SingleWaveform.time   ,TimeError   ] = obj.GetTektronixWfmTimeSingle;
+                        [SingleWaveform.voltage,VoltageError] = obj.GetTektronixWfmVoltageSingle;
                         SingleWaveform.Quality = 1 - hypot(TimeError,VoltageError);
                     case 'Tektronix (.isf)'
-                        [SingleWaveform.time   ,TimeError   ] = GetTektronixIsfTimeSingle(obj);
-                        [SingleWaveform.voltage,VoltageError] = GetTektronixIsfVoltageSingle(obj);
+                        [SingleWaveform.time   ,TimeError   ] = obj.GetTektronixIsfTimeSingle;
+                        [SingleWaveform.voltage,VoltageError] = obj.GetTektronixIsfVoltageSingle;
                         SingleWaveform.Quality = 1 - hypot(TimeError,VoltageError);
                     case 'Tektronix (.dat)'
-                        [SingleWaveform.time   ,TimeError   ] = GetTektronixDatTimeSingle(obj);
-                        [SingleWaveform.voltage,VoltageError] = GetTektronixDatVoltageSingle(obj);
+                        [SingleWaveform.time   ,TimeError   ] = obj.GetTektronixDatTimeSingle;
+                        [SingleWaveform.voltage,VoltageError] = obj.GetTektronixDatVoltageSingle;
                         SingleWaveform.Quality = 1 - hypot(TimeError,VoltageError);
                 end
             else
@@ -443,7 +448,7 @@ classdef ScopeTrace
             Time = Time(:);
         end
         function [Time,Error]       = GetLeCroyTrcTimeSingle(obj)
-            Time  = single(GetLeCroyTrcTime(obj));
+            Time  = single(obj.GetLeCroyTrcTime);
             Error = double(eps(Time(end))) / obj.Info.horizontal_interval;
         end
         function Voltage            = GetLeCroyTrcVoltage(obj)
@@ -470,7 +475,7 @@ classdef ScopeTrace
             end
         end
         function [Voltage,Error]    = GetLeCroyTrcVoltageSingle(obj)
-                Voltage = single(GetLeCroyTrcVoltage(obj));
+                Voltage = single(obj.GetLeCroyTrcVoltage);
                 Error = double(eps(max(abs(Voltage)))) / obj.Info.vertical_gain;
         end
         function SecondVoltage      = GetLeCroyTrcSecondVoltage(obj)
@@ -575,7 +580,7 @@ classdef ScopeTrace
                             obj.Info.NumberOfPoints)';
         end
         function [Time,Error]       = GetLeCroyDatTimeSingle(obj)
-            Time  = single(GetLeCroyDatTime(obj));
+            Time  = single(obj.GetLeCroyDatTime);
             Error = double(eps(Time(end))) / obj.Info.HorizontalInterval;
         end
         function Voltage            = GetLeCroyDatVoltage(obj)
@@ -593,7 +598,7 @@ classdef ScopeTrace
             end
         end
         function [Voltage,Error]    = GetLeCroyDatVoltageSingle(obj)
-            Voltage = single(GetLeCroyDatVoltage(obj));
+            Voltage = single(obj.GetLeCroyDatVoltage);
             Error = double(eps(max(abs(Voltage)))) / min(abs(diff(unique(Voltage))));
         end
         % Tektronix .wfm Methods
@@ -1123,7 +1128,7 @@ classdef ScopeTrace
             fclose(obj.fid);
         end
         function [Time,Error]       = GetTektronixWfmTimeSingle(obj)
-            Time  = single(GetTektronixWfmTime(obj));
+            Time  = single(obj.GetTektronixWfmTime);
             Error = double(eps(Time(end))) / obj.Info.horizontal_resolution;
         end
         function Voltage            = GetTektronixWfmVoltage(obj)
@@ -1148,7 +1153,7 @@ classdef ScopeTrace
             fclose(obj.fid);
         end
         function [Voltage,Error]    = GetTektronixWfmVoltageSingle(obj)
-            Voltage = single(GetTektronixWfmVoltage(obj));
+            Voltage = single(obj.GetTektronixWfmVoltage);
             Error = double(eps(max(abs(Voltage)))) / obj.Info.vertical_resolution;
         end
         % Tektronix .isf Methods
@@ -1222,7 +1227,7 @@ classdef ScopeTrace
             Time = obj.Info.horizontal_interval * ((1:obj.Info.no_of_points)' - obj.Info.trigger_point_offset);
         end
         function [Time,Error]       = GetTektronixIsfTimeSingle(obj)
-            Time  = single(GetTektronixIsfTime(obj));
+            Time  = single(obj.GetTektronixIsfTime);
             Error = double(eps(Time(end))) / obj.Info.horizontal_interval;
         end
         function Voltage            = GetTektronixIsfVoltage(obj)
@@ -1275,7 +1280,7 @@ classdef ScopeTrace
             fclose(obj.fid);
         end
         function [Voltage,Error]    = GetTektronixIsfVoltageSingle(obj)
-            Voltage = single(GetTektronixIsfVoltage(obj));
+            Voltage = single(obj.GetTektronixIsfVoltage);
             Error = double(eps(max(abs(Voltage)))) / obj.Info.vertical_scale_factor;
         end
         % Tektronix .dat Methods
@@ -1309,7 +1314,7 @@ classdef ScopeTrace
                             obj.Info.NumberOfPoints)';
         end
         function [Time,Error]       = GetTektronixDatTimeSingle(obj)
-            Time  = single(GetTektronixDatTime(obj));
+            Time  = single(obj.GetTektronixDatTime);
             Error = double(eps(Time(end))) / obj.Info.HorizontalInterval;
         end
         function Voltage            = GetTektronixDatVoltage(obj)
@@ -1327,13 +1332,13 @@ classdef ScopeTrace
             end
         end
         function [Voltage,Error]    = GetTektronixDatVoltageSingle(obj)
-            Voltage = single(GetTektronixDatVoltage(obj));
+            Voltage = single(obj.GetTektronixDatVoltage);
             Error = double(eps(max(abs(Voltage)))) / min(abs(diff(unique(Voltage))));
         end
         % .SimpleCSV Methods
         function obj                = GetSimpleCSVInfo(obj)
             
-            TimeTmp = csvread(obj.FilePath);
+            TimeTmp = readmatrix(obj.FilePath,"FileType","text");
             TimeTmp = TimeTmp(:,1);
             
             obj.Info.StartTime = min(TimeTmp);
@@ -1352,18 +1357,14 @@ classdef ScopeTrace
             CompressedFilePath = [obj.FilePath(1:end-10),'CompressedVoltage'];
             
             if ~isfile(CompressedFilePath)
-                Voltage = csvread(obj.FilePath);
+                Voltage = readmatrix(obj.FilePath,"FileType","text");
                 Voltage = Voltage(:,2);
                 obj.WriteCompressedWaveform(CompressedFilePath,Voltage)
             else
                 Voltage = obj.ReadCompressedWaveform(CompressedFilePath, ...
-                                                 obj.Info.NumberOfPoints);
+                                                     obj.Info.NumberOfPoints);
             end
         end
-    end
-    
-    methods
-        
     end
     
     methods(Static)
