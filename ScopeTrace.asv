@@ -1478,7 +1478,7 @@ classdef ScopeTrace
             end
             fclose(fid);
         end
-        function              WriteCompressedTime(CompressedTimePath,TimeValues)
+        function WriteCompressedTime(CompressedTimePath,TimeValues)
             % TimeValues [3 Element Array]
             % Value 1: StartTime Float64
             % Value 2: StopTime  Float64
@@ -1489,16 +1489,18 @@ classdef ScopeTrace
             fwrite(fid,TimeValues(3),'uint32' );
             fclose(fid);
         end
-        function Times      = ReadCompressedTime(CompressedTimePath)
+        function Times = ReadCompressedTime(CompressedTimePath,TimeValues)
             % TimeValues [3 Element Array]
             % Value 1: StartTime Float64
             % Value 2: StopTime  Float64
             % Value 3: NumPts    uint32
             Times = nan(3,1);
             fid = fopen(CompressedTimePath,'r');
-            Times(1) = fread(fid,1,'float64=>double');
-            Times(2) = fread(fid,1,'float64=>double');
-            Times(3) = fread(fid,1,'uint32=>double');
+            Times(1) = fread(fid,1,'float64');
+            Times(2) = fread(fid,1,'float64');
+            Times(3) =  = fread(fid,1,'uint32=>double');
+            fwrite(fid,TimeValues(2),'float64');
+            fwrite(fid,TimeValues(3),'uint32' );
             fclose(fid);
         end
         % Low Level Import Functions
