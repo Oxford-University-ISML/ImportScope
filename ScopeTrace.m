@@ -570,7 +570,7 @@ classdef ScopeTrace
             obj.Info.StartTime = min(TimeTmp);
             obj.Info.EndTime   = max(TimeTmp);
             obj.Info.NumberOfPoints = numel(TimeTmp);
-            obj.Info.HorizontalInterval = abs(TimeTmp(2)-TimeTmp(1));
+            obj.Info.HorizontalInterval = mean(diff(TimeTmp));
             
             obj.ValidImport = true;
         end
@@ -1344,7 +1344,7 @@ classdef ScopeTrace
             obj.Info.StartTime = min(TimeTmp);
             obj.Info.EndTime   = max(TimeTmp);
             obj.Info.NumberOfPoints = numel(TimeTmp);
-            obj.Info.HorizontalInterval = abs(TimeTmp(2)-TimeTmp(1));
+            obj.Info.HorizontalInterval = mean(diff(TimeTmp));
             
             obj.ValidImport = true;
         end
