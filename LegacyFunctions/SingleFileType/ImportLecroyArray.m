@@ -1,8 +1,13 @@
 %% This file is designed to read Lecroy binary (.trc) files when read into the workspace as a dataset from an HDF5 database file. 
+%
+% TO CLARIFY: This function is designed to operate on the output of
+% h5read(), you cannot use this on normal .trc files!!!!!
+%
 % You should run the ImportLecroyArray function with the singular input an
 % array of doubles as read in from the HDF5
 % The output will be a struct containg file information, time series, and voltage. 
 % Any issues contact Liam.
+
 
 function waveform = ImportLecroyArray(ByteArray)
 

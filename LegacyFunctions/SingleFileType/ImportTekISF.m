@@ -1,5 +1,5 @@
 %% This file is designed to read Tektronix binary (.isf) files. 
-% You should run the ImportTek function with no input.
+% You should run the ImportTekISF function with no input.
 % The output will be a struct containg file information, time series, and voltage. 
 % Any issues contact Liam.
 

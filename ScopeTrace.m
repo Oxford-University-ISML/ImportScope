@@ -1,5 +1,15 @@
 classdef ScopeTrace
-    %ScopeTrace Class for storing oscilloscope traces.
+    % ScopeTrace Class for storing oscilloscope traces.
+    % Can be called without arguments to access file import dialog
+    % All arguments given in name-value format, they include:
+    % "FilePath"   - String, Path to a scope file, can be relative but 
+    %                absolute is more robust.
+    % "Echo"       - Logical, (False default) for more verbose mode.
+    % "CachedTrace - Logical, (False default), if active will enforce all
+    %                data is stored in workspace, instead of being read in
+    %                when needed (use only if you want faster access at the
+    %                expense of workspace size). Access should be very
+    %                quick even without enabling this.
     
     properties
         FilePath
