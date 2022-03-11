@@ -35,7 +35,7 @@ classdef ScopeTrace
                 inputargs.CachedTrace   = false;
             end
             
-            if ~isfile(inputargs,'FilePath')
+            if ~isfield(inputargs,'FilePath')
                 [file,path] = uigetfile('*');
                 inputargs.FilePath = fullfile(path,file);
                 clearvars file path
