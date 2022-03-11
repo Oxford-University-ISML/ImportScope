@@ -1,9 +1,9 @@
 %% This file is designed to read Tektronix binary (.wfm) files. 
-% You should run the ImportTek function with no input.
+% You should run the ImportTekWFM function with no input.
 % The output will be a struct containg file information, time series, and voltage. 
 % Any issues contact Liam.
 
-function waveform = ImportTekWFM()
+function waveform = ImportTekWFM
 
 %% Initialising Locations & Waveform Variables and opening the binary file.
 [filename,pathname] = uigetfile('*');
