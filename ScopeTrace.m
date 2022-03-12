@@ -277,7 +277,14 @@ classdef ScopeTrace
         % LeCroy .trc Methods
         function obj                = GetLeCroyTrcInfo(obj)
             
-            obj.Offset    = strfind(fread(obj.fid,50,'char')','WAVEDESC') - 1;
+            tmp = char(fread(obj.fid,30,'schar')');
+            switch tmp(12:19)
+                case "WAVEDESC" % This is seemingly always the case!
+                    obj.Offset = 11;
+                otherwise % This will find it if not.
+                    obj.Offset    = strfind(tmp,'WAVEDESC') - 1;
+            end
+            clearvars tmp
             
             obj.Locations.TEMPLATE_NAME        = obj.Offset + 16;   % string
             obj.Locations.COMM_TYPE            = obj.Offset + 32;   % enum
@@ -587,13 +594,14 @@ classdef ScopeTrace
                 obj.WriteCompressedTime(CompressedFilePath, ...
                                        [obj.Info.StartTime, ...
                                         obj.Info.EndTime,   ...
+                                        obj.Info.HorizontalInterval, ...
                                         obj.Info.NumberOfPoints])
             else
                 Times = obj.ReadCompressedTime(CompressedFilePath);
                 obj.Info.StartTime          = Times(1);
                 obj.Info.EndTime            = Times(2);
-                obj.Info.NumberOfPoints     = Times(3);
-                obj.Info.HorizontalInterval = mean(diff(obj.GetLeCroyDatTime));
+                obj.Info.HorizontalInterval = Times(3);
+                obj.Info.NumberOfPoints     = Times(4);
             end
 
             obj.ValidImport = true;
@@ -1361,15 +1369,29 @@ classdef ScopeTrace
         end
         % .SimpleCSV Methods
         function obj                = GetSimpleCSVInfo(obj)
+
+            CompressedFilePath = [obj.FilePath(1:end-10),'_SimpleCSV_CompressedTime'];
+
+            if ~isfile(CompressedFilePath)
+                TimeTmp = readmatrix(obj.FilePath,"FileType","text");
+                TimeTmp = TimeTmp(:,1);
             
-            TimeTmp = readmatrix(obj.FilePath,"FileType","text");
-            TimeTmp = TimeTmp(:,1);
-            
-            obj.Info.StartTime = min(TimeTmp);
-            obj.Info.EndTime   = max(TimeTmp);
-            obj.Info.NumberOfPoints = numel(TimeTmp);
-            obj.Info.HorizontalInterval = mean(diff(TimeTmp));
-            
+                obj.Info.StartTime = min(TimeTmp);
+                obj.Info.EndTime   = max(TimeTmp);
+                obj.Info.NumberOfPoints = numel(TimeTmp);
+                obj.Info.HorizontalInterval = mean(diff(TimeTmp));
+                obj.WriteCompressedTime(CompressedFilePath, ...
+                                       [obj.Info.StartTime, ...
+                                        obj.Info.EndTime,   ...
+                                        obj.Info.HorizontalInterval, ...
+                                        obj.Info.NumberOfPoints])
+            else
+                Times = obj.ReadCompressedTime(CompressedFilePath);
+                obj.Info.StartTime          = Times(1);
+                obj.Info.EndTime            = Times(2);
+                obj.Info.HorizontalInterval = Times(3);
+                obj.Info.NumberOfPoints     = Times(4);
+            end
             obj.ValidImport = true;
         end
         function Time               = GetSimpleCSVTime(obj)
@@ -1479,26 +1501,30 @@ classdef ScopeTrace
             fclose(fid);
         end
         function              WriteCompressedTime(CompressedTimePath,TimeValues)
-            % TimeValues [3 Element Array]
+            % TimeValues [4 Element Array]
             % Value 1: StartTime Float64
             % Value 2: StopTime  Float64
-            % Value 3: NumPts    uint32
+            % Value 3: Interval  Float64
+            % Value 4: NumPts    uint32
             fid = fopen(CompressedTimePath,'w');
             fwrite(fid,TimeValues(1),'float64');
             fwrite(fid,TimeValues(2),'float64');
-            fwrite(fid,TimeValues(3),'uint32' );
+            fwrite(fid,TimeValues(3),'float64');
+            fwrite(fid,TimeValues(4),'uint32' );
             fclose(fid);
         end
         function Times      = ReadCompressedTime(CompressedTimePath)
-            % TimeValues [3 Element Array]
+            % TimeValues [4 Element Array]
             % Value 1: StartTime Float64
             % Value 2: StopTime  Float64
-            % Value 3: NumPts    uint32
-            Times = nan(3,1);
+            % Value 3: Interval  Float64
+            % Value 4: NumPts    uint32
+            Times = nan(4,1);
             fid = fopen(CompressedTimePath,'r');
             Times(1) = fread(fid,1,'float64=>double');
             Times(2) = fread(fid,1,'float64=>double');
-            Times(3) = fread(fid,1,'uint32=>double');
+            Times(3) = fread(fid,1,'float64=>double');
+            Times(4) = fread(fid,1,'uint32=>double' );
             fclose(fid);
         end
         % Low Level Import Functions
