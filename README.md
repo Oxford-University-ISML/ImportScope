@@ -36,4 +36,4 @@ All given as Name-Value pairs, all optional[^3]
 ## SingleFileType Functions
 ### Summary/Warning
 These funtions are **VERY** old, when I (L) coded them i was not nearly as proficient as I am now. Please carefully check the results if you must use these as I cannot garuantee the results will be accurate.
-I highly recommend at least using ImportScope(), this whilst legacy should be fine for data import. Ideally you should use ScopeTrace() it is more memory efficient, and contains lots of extra tricks. ScopeTrace() also integrates with LightGate() and PDVAnalysis() tools allowing some very neat workspaces.
+I highly recommend at least using ImportScope(), this whilst legacy should be fine for data import. Ideally you should use ScopeTrace() it is more memory efficient, and contains lots of extra tricks.
