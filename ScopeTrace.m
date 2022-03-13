@@ -1,16 +1,22 @@
 classdef ScopeTrace
-    % ScopeTrace Class for storing oscilloscope traces.
-    % Can be called without arguments to access file import dialog
-    % All arguments given in name-value format, they include:
-    % "FilePath"   - String, Path to a scope file, can be relative but 
-    %                absolute is more robust.
-    % "Echo"       - Logical, (False default) for more verbose mode.
-    % "CachedTrace - Logical, (False default), if active will enforce all
-    %                data is stored in workspace, instead of being read in
-    %                when needed (use only if you want faster access at the
-    %                expense of workspace size). Access should be very
-    %                quick even without enabling this.
-    
+%% An object for importing binary oscilloscope files from either Tektronix or LeCroy oscilloscopes found within the ISML Lab. This object will manage storage, summarising metadata, and accessing of raw data for a variety of filetypes. Where file types are not conducive to quick access (.csv and .dat a couple of examples) the object will create binary files to acommpany the raw file, these will allow all future imports to run much quicker.
+% 
+% ## Dependencies
+% None
+% 
+% ## Installation
+% Just download and put it somewhere logical. This package is used by other tools (PDVTrace, PDVAnalysis & LightGate) so youll want it to have a fairly logical path.
+% 
+% ## Input arguments
+% All given as Name-Value pairs, all optional[^1]
+% 
+% | Name          | DataType      | Default      	| Description								|
+% | ------------- | ------------- | -------------	| -------------								|
+% | "FilePath"	| string        | N/A           | Path to a scope file, can be relative but absolute is more robust.	|
+% | "Echo"       	| logical	| false 	| Flag for slightly more verbose mode. 					|
+% | "CachedTrace" | logical	| false		| Flag for enforce all data is stored in workspace[^2].			|
+% [^1]: If run without arguments ScopeTrace will launch a file selection window for you to pick the scope file.
+% [^2]: This is instead of data being read in when needed. Access to data should be very quick even without enabling this (sometimes the first read is slow if filetypes are not binary). You should really only use the if you want the fastest possible access to data and loads of free memory. 
     properties
         FilePath
         TraceType
