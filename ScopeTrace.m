@@ -1,31 +1,67 @@
 classdef ScopeTrace
-    % ScopeTrace Class for storing oscilloscope traces.
-    % Can be called without arguments to access file import dialog
-    % All arguments given in name-value format, they include:
-    % "FilePath"   - String, Path to a scope file, can be relative but 
-    %                absolute is more robust.
-    % "Echo"       - Logical, (False default) for more verbose mode.
-    % "CachedTrace - Logical, (False default), if active will enforce all
-    %                data is stored in workspace, instead of being read in
-    %                when needed (use only if you want faster access at the
-    %                expense of workspace size). Access should be very
-    %                quick even without enabling this.
-    
+% ScopeTrace: Class for storing oscilloscope traces.
+% 
+% An object for importing binary oscilloscope files from either Tektronix
+% or LeCroy oscilloscopes found within the ISML Lab. This object will
+% manage storage, summarising metadata, and accessing of raw data for a
+% variety of filetypes. Where file types are not conducive to quick access
+% (.csv and .dat a couple of examples) the object will create binary files
+% to accompany the raw file, these will allow all future imports to run
+% much quicker.
+%
+% ScopeTrace: Dependencies
+% 
+%   None 
+% 
+% ScopeTrace: Installation
+%
+%   Just download and put it somewhere logical. This package is used by
+%   other tools (PDVTrace, PDVAnalysis & LightGate) so youll want it to
+%   have a fairly logical path.
+%   
+%
+% ScopeTrace: Constructor Arguments (All given as Name Value Pairs):
+%
+%   "FilePath" - Absolute or relative file path to a raw oscilloscope 
+%                 file.
+%
+%   "Echo" - Logical, (False default) for more verbose mode.
+%
+%   "CachedTrace" - Logical, (False default), if active will enforce all
+%                   data is stored in workspace, instead of being read in
+%                   when needed (use only if you want faster access at the
+%                   expense of workspace size). Access should be very
+%                   quick even without enabling this.
+%   
+%   Note: If run without arguments ScopeTrace will launch a file selection
+%         diaglogue.
+%
     properties
-        FilePath
-        TraceType
-        Info
+        % FilePath - The path given to the raw oscilloscope trace
+        FilePath {mustBeFile}
+        % TraceType - A string containing a descriptor of the type of scope.
+        TraceType {mustBeText}
+        % Info - A struct containing lots of metadata about the oscilloscope trace. The import will pull as much data as possible depending on the file type.
+        Info struct
     end
-    
     properties(Dependent)
+        % Time - Column vector containing time values for the oscilloscope trace.
         Time
+        % Voltage - Column vector containing voltage values for the oscilloscope trace.
         Voltage
+        % SecondVoltage - Column vector containing secondary voltage values for the oscilloscope trace, this will only be populated if this data exists.
         SecondVoltage
+        % UserText - A string containing UserText, a field that may be present in some binary oscilloscope files.
         UserText
+        % TrigtimeArray - A property containing the Tigger Times, this will only be populated in multi-trigger traces.
         TrigtimeArray
+        % RisTimeArray - A property containing information about Random Interleaved Sampling should it be used.
         RisTimeArray
+        % Note : UserText, TrigtimeArray and RisTimeArray will all return
+        % strings requestiong you send me the file, this is becuase the
+        % framework for importing this is untested. I will validate and
+        % update the code if you hit these errors!
     end
-    
     properties (Access = private)
         Echo
         CachedTrace
@@ -36,13 +72,36 @@ classdef ScopeTrace
         RawInfo
         ValidImport = false
     end
-    
     methods
         function obj = ScopeTrace(inputargs)
+            %Valid Arguments - {"FilePath",  "Echo",  "Cached Trace"}
+            % 
+            % INPUT "FilePath" - Absolute or relative file path to a raw 
+            %                    oscilloscope file. This will be imported 
+            %                    using ScopeTrace.
+            %                               
+            %       "Echo" - A logical value that will trigger a more
+            %                verbose import mode. Default = false
+            %
+            %       "CachedTrace - A flag that will enforce that all loaded
+            %                data is stored in workspace, instead of being
+            %                read in when needed [1]. Default = false
+            %                
+            %       Note: If run without any input arguments the
+            %             constructor will open a file dialogue to select a
+            %             raw oscilloscope file.
+            %
+            % OUTPUT  obj - The object.
+            %
+            % REMARKS   1)  Enable this only if you want marginally faster
+            %               access at the expense of workspace size).
+            %               Access should be very quick even without
+            %               enabling this.
+            %
             arguments
                 inputargs.FilePath      {mustBeFile}
-                inputargs.Echo          = false;
-                inputargs.CachedTrace   = false;
+                inputargs.Echo          logical = false;
+                inputargs.CachedTrace   logical = false;
             end
             
             if ~isfield(inputargs,'FilePath')
@@ -182,6 +241,15 @@ classdef ScopeTrace
         end
         
         function TracePlot          = PlotTrace(obj,Ax)
+            %PlotTrace - Produce a quick plot of the raw data.
+            % 
+            % INPUT     obj - The object.
+            %                               
+            %           Ax - (Optional) The handle of a graphics figure.
+            %
+            % OUTPUT    TracePlot - The handle for the figure that was
+            %                     created.
+            %            
             if obj.ValidImport
                 if ~exist('Ax','var')
                     TracePlot = figure();
@@ -196,6 +264,14 @@ classdef ScopeTrace
             end
         end
         function Waveform           = Waveform(obj)
+            %Waveform - Get the waveform data from the object.
+            % 
+            % INPUT     obj - The object.
+            %
+            % OUTPUT    Waveform - A struct containing time and voltage
+            %                      values for the raw data in double
+            %                      precision.
+            %
             if obj.ValidImport
                 switch obj.TraceType
                     case 'LeCroy (.trc)'
@@ -222,6 +298,22 @@ classdef ScopeTrace
             end
         end
         function SingleWaveform     = SingleWaveform(obj)
+            %SingleWaveform - Get the waveform data from the object in single precision.
+            % 
+            % INPUT     obj - The object.
+            %
+            % OUTPUT    SingleWaveform - A struct containing time and 
+            %                            voltage values for the raw data in
+            %                            single precision. This struct also
+            %                            included errors for the single
+            %                            approximation and a quality field
+            %                            that tries to quantify how well
+            %                            the single approximation has
+            %                            worked.
+            %
+            % REMARKS 1) The only advantage of this function is a reduction
+            %            in workspace size, if not using CachedTrace there
+            %            should never be a need for this
             if obj.ValidImport    
                 switch obj.TraceType
                     case 'LeCroy (.trc)'
@@ -250,13 +342,34 @@ classdef ScopeTrace
             end
         end
         function time               = time(obj)
+            %time - Get the waveform Time property.
+            % This is purely used for covering potentital syntax
+            % varaiation.
+            % 
+            % INPUT     obj - The object.
+            %
+            % OUTPUT    time - A 1D array contianing double precision time
+            %                  values.
+            %
+            % REMARKS 1) I would recommend using Waveform method instead.
+            %
             time = obj.Time;
         end
         function voltage            = voltage(obj)
+            %voltage - Get the waveform Voltage property.
+            % This is purely used for covering potentital syntax
+            % varaiation.
+            % 
+            % INPUT     obj - The object.
+            %
+            % OUTPUT    voltage - A 1D array contianing double precision
+            %                     voltage values.
+            %
+            % REMARKS 1) I would recommend using Waveform method instead.
+            %
             voltage = obj.Voltage;
         end
     end
-    
     methods (Access = private)
         function obj                = GetTraceType(obj)
             switch obj.FilePath(end-3:end)
@@ -1412,8 +1525,7 @@ classdef ScopeTrace
             end
         end
     end
-    
-    methods(Static)
+    methods(Static, Access=private)
         % Trace Type
         function TraceType  = DecipherDatType(FilePath)
             
