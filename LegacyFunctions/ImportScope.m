@@ -1,4 +1,13 @@
 function waveform = ImportScope(inputargs)
+%% This function is the precursor to ScopeTrace, it will import a variety of filetypes and return struct objects that contain the raw data and the file metadata where it is available. This function lacks many optimisations that are present in ScopeTrace, it also is less memory efficient as the data is not accessed at the point of use, rather it is outputted directly from the function into a variable.
+% ### Input Arguments
+% All given as Name-Value pairs, all optional[^3]
+% 
+% | Name          | DataType      | Default      	| Description								|
+% | ------------- | ------------- | -------------	| -------------								|
+% | "FilePath"	| string        | N/A           | Path to a scope file, can be relative but absolute is more robust.	|
+% | "Echo"       	| logical	| false 	| Flag for slightly more verbose mode. 					|
+% [^3]: If run without arguments ImportScope will launch a file selection window for you to pick the scope file.
 arguments
     inputargs.Filename string
     inputargs.Echo     logical = true
