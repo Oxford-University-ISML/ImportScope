@@ -38,11 +38,11 @@ classdef ScopeTrace
 %
     properties
         % FilePath - The path given to the raw oscilloscope trace
-        FilePath {mustBeFile}
+        FilePath
         % TraceType - A string containing a descriptor of the type of scope.
-        TraceType {mustBeText}
+        TraceType
         % Info - A struct containing lots of metadata about the oscilloscope trace. The import will pull as much data as possible depending on the file type.
-        Info struct
+        Info
     end
     properties(Dependent)
         % Time - Column vector containing time values for the oscilloscope trace.
@@ -99,7 +99,7 @@ classdef ScopeTrace
             %               enabling this.
             %
             arguments
-                inputargs.FilePath      {mustBeFile}
+                inputargs.FilePath      %{mustBeFile}
                 inputargs.Echo          logical = false;
                 inputargs.CachedTrace   logical = false;
             end
