@@ -18,7 +18,7 @@ All given as Name-Value pairs, all optional[^1]
 | `"CachedTrace"`   | logical       | false             | Flag for enforce all data is stored in workspace[^2].
 
 [^1]: If run without arguments ScopeTrace will launch a file selection window for you to pick the scope file.
-[^2]: This is instead of data being read in when needed. Access to data should be very quick even without enabling this (sometimes the first read is slow if filetypes are not binary). You should really only use the if you want the fastest possible access to data and loads of free memory.
+[^2]: This is instead of data being read in when needed. Access to data should be very quick even without enabling this (sometimes the first read is slow if filetypes are not binary). You should really only use the if you want the fastest possible access to data and have loads of free memory.
 
 ## Properties
 
