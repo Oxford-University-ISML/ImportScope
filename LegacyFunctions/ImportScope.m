@@ -160,9 +160,15 @@ clearvars ans fid
     end
     function [location] = find_location(string)
         location = struct();
-        location.start = regexp(data,string,'once'); %finding the start of the entry
-        location.start = location.start + regexp(data(location.start:end),' ','once'); % finding the space in between entry and value
-        location.length = regexp(data(location.start:end),';','once')-2;
+        if isnumeric(data)
+            location.start = regexp(char(data),string,'once'); %finding the start of the entry
+            location.start = location.start + regexp(char(data(location.start:end)),' ','once'); % finding the space in between entry and value
+            location.length = regexp(char(data(location.start:end)),';','once')-2;
+        else
+            location.start = regexp(data,string,'once'); %finding the start of the entry
+            location.start = location.start + regexp(data(location.start:end),' ','once'); % finding the space in between entry and value
+            location.length = regexp(data(location.start:end),';','once')-2;
+        end
     end
     
     function get_informations

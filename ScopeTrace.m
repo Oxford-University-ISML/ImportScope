@@ -61,6 +61,9 @@ classdef ScopeTrace
         % strings requestiong you send me the file, this is becuase the
         % framework for importing this is untested. I will validate and
         % update the code if you hit these errors!
+        Channel
+        % Channel - A string containing (if anything) the apparent channel
+        % of the trace.
     end
     properties (Access = private)
         Echo
@@ -99,7 +102,7 @@ classdef ScopeTrace
             %               enabling this.
             %
             arguments
-                inputargs.FilePath      %{mustBeFile}
+                inputargs.FilePath      
                 inputargs.Echo          logical = false;
                 inputargs.CachedTrace   logical = false;
             end
@@ -109,6 +112,10 @@ classdef ScopeTrace
                 inputargs.FilePath = fullfile(path,file);
                 clearvars file path
             end
+            if isstring(inputargs.FilePath)
+                inputargs.FilePath = char(inputargs.FilePath);
+            end
+
             obj.FilePath    = inputargs.FilePath;
             obj.Echo        = inputargs.Echo;
             obj.CachedTrace = inputargs.CachedTrace;
@@ -239,7 +246,16 @@ classdef ScopeTrace
             end
             
         end
-        
+        function Channel            = get.Channel(obj)
+            switch obj.TraceType
+                case 'Tektronix (.isf)'
+                    Channel = split(obj.Info.waveform_identifier,',');
+                    Channel = Channel{1};
+                otherwise
+                    Channel = '???';
+            end
+        end
+
         function TracePlot          = PlotTrace(obj,Ax)
             %PlotTrace - Produce a quick plot of the raw data.
             % 
