@@ -137,6 +137,7 @@ classdef ScopeTrace
                     case 'Tektronix (.dat)'
                         obj = obj.GetTektronixDatInfo;
                     case 'Tektronix (.csv)'
+                        obj.Info = 'Tektronix (.csv) files are not supported, please save as (.isf) or (.wfm)';
                         % obj = obj.GetTektronixCsvInfo;
                     case 'Simple CSV (.SimpleCSV)'
                         fclose(obj.fid);
@@ -247,10 +248,18 @@ classdef ScopeTrace
             
         end
         function Channel            = get.Channel(obj)
+            % Ch1, Ch2, Ch3, Ch4, ??? Outputs
             switch obj.TraceType
                 case 'Tektronix (.isf)'
                     Channel = split(obj.Info.waveform_identifier,',');
                     Channel = Channel{1};
+                case 'LeCroy (.trc)'
+                    Channel = char(obj.Info.wave_source);
+                    if startsWith(Channel,'C')
+                        Channel = [Channel(1),'h',Channel(2)];
+                    else
+                        Channel = '???';
+                    end
                 otherwise
                     Channel = '???';
             end
