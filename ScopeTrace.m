@@ -46,13 +46,15 @@ classdef ScopeTrace
     end
     properties(Dependent)
         % Time - Column vector containing time values for the oscilloscope trace.
-        Time
+        Time    (:,1) numerictype
         % Voltage - Column vector containing voltage values for the oscilloscope trace.
-        Voltage
+        Voltage (:,1) numerictype
         % SecondVoltage - Column vector containing secondary voltage values for the oscilloscope trace, this will only be populated if this data exists.
         SecondVoltage
+        SecondVoltage 
         % UserText - A string containing UserText, a field that may be present in some binary oscilloscope files.
         UserText
+        UserText 
         % TrigtimeArray - A property containing the Tigger Times, this will only be populated in multi-trigger traces.
         TrigtimeArray
         % RisTimeArray - A property containing information about Random Interleaved Sampling should it be used.
@@ -64,6 +66,10 @@ classdef ScopeTrace
         Channel
         % Channel - A string containing (if anything) the apparent channel
         % of the trace.
+    end
+    properties (Dependent)
+        sample_rate
+        is_valid
     end
     properties (Access = private)
         Echo
@@ -265,6 +271,30 @@ classdef ScopeTrace
             end
         end
 
+        function is_valid           = get.is_valid(obj)
+            is_valid = obj.ValidImport;
+        end
+        function sample_rate        = get.sample_rate(obj)
+            if obj.ValidImport
+                switch obj.TraceType
+                    case 'LeCroy (.trc)'
+                        dt = obj.Info.horizontal_interval;
+                    case 'LeCroy (.dat)'
+                        dt = (obj.Info.EndTime - obj.Info.StartTime) / (obj.Info.NumberOfPoints - 1);
+                    case 'Tektronix (.wfm)'
+                        dt = obj.RawInfo.Waveform_header.Implicit_Dimension_1.Dim_scale;
+                    case 'Tektronix (.isf)'
+                        dt = obj.Info.horizontal_interval;
+                    case 'Tektronix (.dat)'
+                        dt = (obj.Info.EndTime - obj.Info.StartTime) / (obj.Info.NumberOfPoints - 1);
+                    case 'Tektronix (.csv)'
+                        error('Not Currently Available for Tektronnix (.csv)')
+                    case 'Simple CSV (.SimpleCSV)'
+                        dt = (obj.Info.EndTime - obj.Info.StartTime) / (obj.Info.NumberOfPoints - 1);
+                end
+                sample_rate = 1.0 / dt;
+            end
+        end
         function TracePlot          = PlotTrace(obj,Ax)
             %PlotTrace - Produce a quick plot of the raw data.
             % 
