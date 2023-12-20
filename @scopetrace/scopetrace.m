@@ -82,18 +82,19 @@ classdef scopetrace < handle
     end
     methods
         function obj = scopetrace(args)
-            %Valid Arguments - {"FilePath",  "Echo",  "Cached Trace"}
+            %Valid Arguments - {"path",  "echo",  "cache"}
             % 
-            % INPUT "FilePath" - Absolute or relative file path to a raw 
-            %                    oscilloscope file. This will be imported 
-            %                    using ScopeTrace.
+            % INPUT "path" - Absolute or relative file path to a raw 
+            %                oscilloscope file. This will be imported 
+            %                using ScopeTrace.
             %                               
-            %       "Echo" - A logical value that will trigger a more
+            %       "echo" - A logical value that will trigger a more
             %                verbose import mode. Default = false
             %
-            %       "CachedTrace - A flag that will enforce that all loaded
-            %                data is stored in workspace, instead of being
-            %                read in when needed [1]. Default = false
+            %       "cache - An on/off switch state that will enforce
+            %                the storage of all loaded data in the 
+            %                workspace, instead of being read in when 
+            %                needed [1]. Default = false
             %                
             %       Note: If run without any input arguments the
             %             constructor will open a file dialogue to select a
