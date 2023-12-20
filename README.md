@@ -1,12 +1,14 @@
-# scopetrace
-## Summary
-An object for importing binary oscilloscope files from either Tektronix or LeCroy oscilloscopes found within the ISML Lab. This object will manage storage, summarising metadata, and accessing of raw data for a variety of filetypes. Where file types are not conducive to quick access (.csv and .dat a couple of examples) the object will create binary files to accompany the raw file, these will allow all future imports to run much quicker.
+# ImportScope
+This toolbox is designed to facilitate the import of binary files from either Tektronix or LeCroy oscilloscopes found within the ISML at Oxford into MATLAB workspaces for analysis. The toolbox itself is comprised of a single key class, `scopetrace`, and a library of functions that handle low-level file I/O. Below you will find installation instructions and a summary of the `scopetrace` class.
+
+## Installation
+Download the folder and put it somewhere logical. This package is relied upon by other tools you may find yourself using so you'll want it to have a fairly logical path. You will need to keep the `+lib` and `+tools` folders in the same directory as the `@scopetrace` folder, as without this the class will not have access to the low level functions that let it work, and that keep the main class folder less cluttered.
 
 ## Dependencies
 None
 
-## Installation
-Download the folder and put it somewhere logical. This package is relied upon by other tools you may find yourself using so you'll want it to have a fairly logical path. You will need to keep the `+lib` and `+tools` folders in the same directory as the `@scopetrace` folder, as without this the class will not have access to the low level functions that let it work, and that keep the main class folder less cluttered.
+# scopetrace
+This object will manage storage, summarising metadata, and accessing of raw data for a variety of filetypes. Where file types are not conducive to quick access (.csv and .dat a couple of examples) the object will create binary files to accompany the raw file, these will allow all future imports to run much quicker.
 
 ## Constructor Arguments
 All given as Name-Value pairs, all optional[^1]
