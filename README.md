@@ -1,21 +1,23 @@
-# ScopeTrace
-## Summary
-An object for importing binary oscilloscope files from either Tektronix or LeCroy oscilloscopes found within the ISML Lab. This object will manage storage, summarising metadata, and accessing of raw data for a variety of filetypes. Where file types are not conducive to quick access (.csv and .dat a couple of examples) the object will create binary files to accompany the raw file, these will allow all future imports to run much quicker.
+# ImportScope
+This toolbox is designed to facilitate the import of binary files from either Tektronix or LeCroy oscilloscopes found within the ISML at Oxford into MATLAB workspaces for analysis. The toolbox itself is comprised of a single key class, `scopetrace`, and a library of functions that handle low-level file I/O. Below you will find installation instructions and a summary of the `scopetrace` class.
+
+## Installation
+Download the folder and put it somewhere logical. This package is relied upon by other tools you may find yourself using so you'll want it to have a fairly logical path. You will need to keep the `+lib` and `+tools` folders in the same directory as the `@scopetrace` folder, as without this the class will not have access to the low level functions that let it work, and that keep the main class folder less cluttered.
 
 ## Dependencies
 None
 
-## Installation
-Just download and put it somewhere logical. This package is used by other tools (`PDVTrace`, `PDVAnalysis` & `LightGate`) so you'll want it to have a fairly logical path.
+# scopetrace
+This object will manage storage, summarising metadata, and accessing of raw data for a variety of filetypes. Where file types are not conducive to quick access (.csv and .dat a couple of examples) the object will create binary files to accompany the raw file, these will allow all future imports to run much quicker.
 
 ## Constructor Arguments
 All given as Name-Value pairs, all optional[^1]
 
-| Name              | DataType      | Default           | Description                                                           |
-| -------------     | ------------- | ----------------- | --------------------------------------------------------------------- |
-| `"FilePath"`      | string        | N/A               | Path to a scope file, can be relative but absolute is more robust.    |
-| `"Echo"`          | logical       | false             | Flag for slightly more verbose mode.                                  |
-| `"CachedTrace"`   | logical       | false             | Flag for enforce all data is stored in workspace[^2].
+| Name      | DataType      | Default           | Description                                                           |
+| --------- | ------------- | ----------------- | --------------------------------------------------------------------- |
+| `"path"`  | string        | N/A               | Path to a scope file, can be relative but absolute is more robust.    |
+| `"echo"`  | logical       | false             | Flag for slightly more verbose mode.                                  |
+| `"cache"` | logical       | false             | Flag for enforce all data is stored in workspace[^2].                 |
 
 [^1]: If run without arguments ScopeTrace will launch a file selection window for you to pick the scope file.
 [^2]: This is instead of data being read in when needed. Access to data should be very quick even without enabling this (sometimes the first read is slow if filetypes are not binary). You should really only use the if you want the fastest possible access to data and have loads of free memory.
