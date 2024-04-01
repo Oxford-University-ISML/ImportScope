@@ -10,7 +10,7 @@ classdef scopetrace < handle
 % much quicker so long as the original is not moved away from its binary 
 % Doppelgänger.
 %
-% ScopeTrace: Dependencies
+% scopetrace: Dependencies
 % 
 %   None.
 % 
@@ -24,7 +24,7 @@ classdef scopetrace < handle
 %   functions that let it work, and that keep the main class folder less 
 %   cluttered.
 %
-% ScopeTrace: Constructor Arguments (All given as Name Value Pairs):
+% scopetrace: Constructor Arguments (All given as Name Value Pairs):
 %
 %   "path" - Absolute or relative file path to a raw oscilloscope file.
 %
@@ -86,7 +86,7 @@ classdef scopetrace < handle
             % 
             % INPUT "FilePath" - Absolute or relative file path to a raw 
             %                    oscilloscope file. This will be imported 
-            %                    using ScopeTrace.
+            %                    using scopetrace.
             %                               
             %       "Echo" - A logical value that will trigger a more
             %                verbose import mode. Default = false
@@ -280,5 +280,8 @@ classdef scopetrace < handle
                 out = 1.0 / dt;
             end
         end
+    end
+    methods (Static)
+        tf = validate(path)
     end
 end
