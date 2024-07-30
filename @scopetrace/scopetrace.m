@@ -113,15 +113,16 @@ classdef scopetrace < handle
                 args.cache (1,1) matlab.lang.OnOffSwitchState = "off";
             end
             
-            if args.path.startsWith(filesep)
-                obj.path = args.path;
-            else
-                obj.path = which(args.path);
-            end
             obj.echo  = args.echo;
             obj.cache = args.cache;
             
-            if isfile(obj.path)
+            if isfile(args.path)
+                
+                % If the path is provided as a relative filepath, then the use of fileattrib() here
+                % will convert it to an absolute filepath.
+                [~, info] = fileattrib(args.path);
+                obj.path = info.Name;
+                
                 obj.get_type;
                 switch obj.type
                     case "LeCroy (.trc)"
