@@ -1,4 +1,4 @@
-function obj = get_info(obj)
+function get_info(obj)
 % Locations found by Liam on 4054 isf file, could vary scope to scope as no specific format for tek scopes.
 
 fid = fopen(obj.path, "r");
