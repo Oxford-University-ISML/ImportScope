@@ -1,5 +1,4 @@
 function get_type(obj)
-    
     switch obj.path.extractAfter(".")
         case "trc"
             obj.type = "LeCroy (.trc)";
