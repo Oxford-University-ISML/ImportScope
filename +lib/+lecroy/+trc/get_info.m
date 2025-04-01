@@ -63,7 +63,7 @@ function get_info(obj)
     obj.locs.PROBE_ATT          = obj.offset + 328;  % float
     obj.locs.FIXED_VERT_GAIN    = obj.offset + 332;  % enum
     obj.locs.BANDWIDTH_LIMIT    = obj.offset + 334;  % enum
-    obj.locs.VERTICAL_VERNIER   = obj.offset + 336;  % enum
+    obj.locs.VERTICAL_VERNIER   = obj.offset + 336;  % float
     obj.locs.ACQ_VERT_OFFSET    = obj.offset + 340;  % float
     obj.locs.WAVE_SOURCE        = obj.offset + 344;  % enum
     

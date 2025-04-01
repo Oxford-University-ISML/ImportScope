@@ -308,7 +308,7 @@ function get_info(obj)
         obj.info.Waveform_header.Implicit_Dimension_1.User_scale           = lib.byte.dble(fid, obj.locs.Waveform_header.Implicit_Dimension_1.User_scale          );
         obj.info.Waveform_header.Implicit_Dimension_1.User_units           = lib.byte.char(fid, obj.locs.Waveform_header.Implicit_Dimension_1.User_units,       20);
         obj.info.Waveform_header.Implicit_Dimension_1.User_offset          = lib.byte.dble(fid, obj.locs.Waveform_header.Implicit_Dimension_1.User_offset         );
-        obj.info.Waveform_header.Implicit_Dimension_1.Point_density        = lib.byte.ulng(fid, obj.locs.Waveform_header.Implicit_Dimension_1.Point_density       );
+        obj.info.Waveform_header.Implicit_Dimension_1.Point_density        = lib.byte.dble(fid, obj.locs.Waveform_header.Implicit_Dimension_1.Point_density       );
         obj.info.Waveform_header.Implicit_Dimension_1.HRef_in_percent      = lib.byte.dble(fid, obj.locs.Waveform_header.Implicit_Dimension_1.HRef_in_percent     );
         obj.info.Waveform_header.Implicit_Dimension_1.TrigDelay_in_seconds = lib.byte.dble(fid, obj.locs.Waveform_header.Implicit_Dimension_1.TrigDelay_in_seconds);
     end
@@ -342,7 +342,8 @@ function get_info(obj)
         obj.info.Waveform_header.Implicit_Dimension_2.User_scale           = lib.byte.dble(fid, obj.locs.Waveform_header.Implicit_Dimension_2.User_scale          );
         obj.info.Waveform_header.Implicit_Dimension_2.User_units           = lib.byte.char(fid, obj.locs.Waveform_header.Implicit_Dimension_2.User_units,       20);
         obj.info.Waveform_header.Implicit_Dimension_2.User_offset          = lib.byte.dble(fid, obj.locs.Waveform_header.Implicit_Dimension_2.User_offset         );
-        obj.info.Waveform_header.Implicit_Dimension_2.Point_density        = lib.byte.ulng(fid, obj.locs.Waveform_header.Implicit_Dimension_2.HRef_in_percent     );
+        obj.info.Waveform_header.Implicit_Dimension_2.Point_density        = lib.byte.dble(fid, obj.locs.Waveform_header.Implicit_Dimension_2.Point_density       );
+        obj.info.Waveform_header.Implicit_Dimension_2.HRef_in_percent      = lib.byte.dble(fid, obj.locs.Waveform_header.Implicit_Dimension_2.HRef_in_percent     );
         obj.info.Waveform_header.Implicit_Dimension_2.TrigDelay_in_seconds = lib.byte.dble(fid, obj.locs.Waveform_header.Implicit_Dimension_2.TrigDelay_in_seconds);
     end
 
