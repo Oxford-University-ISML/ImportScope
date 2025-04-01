@@ -82,7 +82,7 @@ classdef scopetrace < handle
     end
     methods
         function obj = scopetrace(args)
-            %Valid Arguments - {"path",  "echo",  "cache"}
+            %Valid Arguments - {"path",  "echo",  "cache", "parent"}
             % 
             % INPUT "path" - Absolute or relative file path to a raw 
             %                oscilloscope file. This will be imported 
@@ -91,10 +91,13 @@ classdef scopetrace < handle
             %       "echo" - A logical value that will trigger a more
             %                verbose import mode. Default = false
             %
-            %       "cache - An on/off switch state that will enforce
+            %      "cache" - An on/off switch state that will enforce
             %                the storage of all loaded data in the 
             %                workspace, instead of being read in when 
             %                needed [1]. Default = false
+            %
+            %     "parent" - An optional handle to an encapsulating 
+            %                object, allowing heirarchical linkage.
             %                
             %       Note: If run without any input arguments the
             %             constructor will open a file dialogue to select a
@@ -111,6 +114,7 @@ classdef scopetrace < handle
                 args.path  (1,1) string {mustBeFile} = tools.uigetfullfile()
                 args.echo  (1,1) matlab.lang.OnOffSwitchState = "off";
                 args.cache (1,1) matlab.lang.OnOffSwitchState = "off";
+                args.parent
             end
             
             obj.echo  = args.echo;
@@ -126,15 +130,15 @@ classdef scopetrace < handle
                 obj.get_type;
                 switch obj.type
                     case "LeCroy (.trc)"
-                        lib.lecroy.trc.get_info(obj)
+                        lib.lecroy.trc.get_info(obj);
                     case "LeCroy (.dat)"
-                        lib.lecroy.dat.get_info(obj)
+                        lib.lecroy.dat.get_info(obj);
                     case "Tektronix (.wfm)"
-                        lib.tektronix.wfm.get_info(obj)
+                        lib.tektronix.wfm.get_info(obj);
                     case "Tektronix (.isf)"
-                        lib.tektronix.isf.get_info(obj)
+                        lib.tektronix.isf.get_info(obj);
                     case "Tektronix (.dat)"
-                        lib.tektronix.dat.get_info(obj)
+                        lib.tektronix.dat.get_info(obj);
                     case "Tektronix (.csv)"
                         obj.info = "Tektronix (.csv) files are not supported, please save as .isf or .wfm";
                         % obj = obj.GetTektronixCsvInfo;
@@ -144,6 +148,11 @@ classdef scopetrace < handle
                         obj.info = "Invalid File Type, must be: .trc, .dat, .wfm, .isf or .csv";
                 end
             end
+
+            if isfield(args, "parent")
+                obj.parent = args.parent;
+            end
+            
         end
         function out = get.time(           obj)
             if obj.valid_import
